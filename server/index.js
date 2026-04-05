@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const tripRoutes = require('./routes/tripRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -13,7 +14,10 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Allows us to send/receive JSON
+app.use(express.json());
+
+// Routes
+app.use('/api/trips', tripRoutes);
 
 // Basic Test Route
 app.get('/', (req, res) => {
