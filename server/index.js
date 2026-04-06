@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 // Route Imports
 const tripRoutes = require('./routes/tripRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.json()); // Essential for Postman/Frontend to send JSON data
 // API Routes
 app.use('/api/trips', tripRoutes);     // Handles CRUD for trips and items
 app.use('/api/reports', reportRoutes); // Handles Aggregation reports
+app.use('/api/auth', authRoutes);      // Handles User Authentication
 
 // Basic Health Check Route
 app.get('/', (req, res) => {
