@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getTrips, addItem, deleteItem } from '../services/api';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, ShoppingCart, Tag, Hash, CreditCard } from 'lucide-react';
 
 const TripDetails = () => {
     const { id } = useParams();
@@ -14,9 +14,13 @@ const TripDetails = () => {
     }, [id]);
 
     const loadTrip = async () => {
-        const { data } = await getTrips();
-        const currentTrip = data.find(t => t._id === id);
-        setTrip(currentTrip);
+        try {
+            const { data } = await getTrips();
+            const currentTrip = data.find(t => t._id === id);
+            setTrip(currentTrip);
+        } catch (error) {
+            console.error("Failed to load trip details", error);
+        }
     };
 
     const handleAddItem = async (e) => {
@@ -26,60 +30,125 @@ const TripDetails = () => {
         loadTrip();
     };
 
-    if (!trip) return <p>Loading...</p>;
+    if (!trip) return (
+        <div className="flex h-64 items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent"></div>
+        </div>
+    );
 
     return (
-        <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-            <button onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '20px', background: 'none', border: 'none', cursor: 'pointer', color: '#007bff' }}>
-                <ArrowLeft size={20} /> Back to Trips
-            </button>
+        <div className="space-y-8">
+            {/* --- TOP NAVIGATION & HEADER --- */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <button 
+                    onClick={() => navigate('/')} 
+                    className="flex w-fit items-center gap-2 text-sm font-semibold text-slate-500 transition-colors hover:text-emerald-600"
+                >
+                    <ArrowLeft size={18} /> Back to Dashboard
+                </button>
+                
+                <div className="text-right">
+                    <h2 className="text-2xl font-bold text-slate-900">{trip.storeName}</h2>
+                    <p className="text-sm font-medium text-slate-500">
+                        Total Value: <span className="text-lg font-bold text-emerald-600 ml-1">R{trip.totalSpent.toFixed(2)}</span>
+                    </p>
+                </div>
+            </div>
 
-            <h2>{trip.storeName} Details</h2>
-            <p>Total Spent: <strong>R{trip.totalSpent.toFixed(2)}</strong></p>
+            {/* --- ADD ITEM "ACTION BAR" --- */}
+            <div className="rounded-3xl bg-slate-50 p-6 border border-slate-200 shadow-inner">
+                <h3 className="mb-4 text-sm font-bold uppercase tracking-widest text-slate-400">Add New Item</h3>
+                <form onSubmit={handleAddItem} className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                    <div className="relative">
+                        <ShoppingCart className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <input 
+                            type="text" placeholder="Item Name" value={formData.name} 
+                            onChange={(e) => setFormData({...formData, name: e.target.value})} required 
+                            className="w-full rounded-xl border-slate-200 py-3 pl-10 pr-4 text-sm focus:ring-4 focus:ring-emerald-500/10 outline-none"
+                        />
+                    </div>
+                    <div className="relative">
+                        <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <input 
+                            type="number" placeholder="Price" value={formData.price} 
+                            onChange={(e) => setFormData({...formData, price: e.target.value})} required 
+                            className="w-full rounded-xl border-slate-200 py-3 pl-10 pr-4 text-sm focus:ring-4 focus:ring-emerald-500/10 outline-none"
+                        />
+                    </div>
+                    <div className="relative">
+                        <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <input 
+                            type="number" placeholder="Qty" value={formData.quantity} 
+                            onChange={(e) => setFormData({...formData, quantity: e.target.value})} required 
+                            className="w-full rounded-xl border-slate-200 py-3 pl-10 pr-4 text-sm focus:ring-4 focus:ring-emerald-500/10 outline-none"
+                        />
+                    </div>
+                    <div className="relative">
+                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <select 
+                            value={formData.category} 
+                            onChange={(e) => setFormData({...formData, category: e.target.value})}
+                            className="w-full appearance-none rounded-xl border-slate-200 bg-white py-3 pl-10 pr-4 text-sm focus:ring-4 focus:ring-emerald-500/10 outline-none"
+                        >
+                            <option value="Food">Food</option>
+                            <option value="Drinks">Drinks</option>
+                            <option value="Toiletries">Toiletries</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <button 
+                        type="submit" 
+                        className="flex items-center justify-center rounded-xl bg-slate-900 py-3 font-bold text-white transition-all hover:bg-emerald-600 active:scale-95 shadow-lg shadow-slate-200"
+                    >
+                        <Plus size={20} />
+                    </button>
+                </form>
+            </div>
 
-            {/* Add Item Form */}
-            <form onSubmit={handleAddItem} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '10px', marginBottom: '30px' }}>
-                <input type="text" placeholder="Item Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
-                <input type="number" placeholder="Price" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} required />
-                <input type="number" placeholder="Qty" value={formData.quantity} onChange={(e) => setFormData({...formData, quantity: e.target.value})} required />
-                <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})}>
-                    <option value="Food">Food</option>
-                    <option value="Drinks">Drinks</option>
-                    <option value="Toiletries">Toiletries</option>
-                    <option value="Other">Other</option>
-                </select>
-                <button type="submit" style={{ background: '#28a745', color: '#fff', border: 'none', padding: '10px', borderRadius: '4px' }}><Plus /></button>
-            </form>
+            {/* --- ITEMS LIST (Modern Cards) --- */}
+            <div className="space-y-3">
+                <div className="hidden grid-cols-5 px-6 text-xs font-bold uppercase tracking-widest text-slate-400 lg:grid">
+                    <div className="col-span-2">Item Description</div>
+                    <div>Price / Qty</div>
+                    <div>Line Total</div>
+                    <div className="text-right">Actions</div>
+                </div>
 
-            {/* Items List */}
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                    <tr style={{ borderBottom: '2px solid #eee', textAlign: 'left' }}>
-                        <th>Item</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Qty</th>
-                        <th>Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {trip.items.map(item => (
-                        <tr key={item._id} style={{ borderBottom: '1px solid #eee' }}>
-                            <td style={{ padding: '10px 0' }}>{item.name}</td>
-                            <td>{item.category}</td>
-                            <td>R{item.price.toFixed(2)}</td>
-                            <td>{item.quantity}</td>
-                            <td>R{(item.price * item.quantity).toFixed(2)}</td>
-                            <td>
-                                <button onClick={async () => { await deleteItem(id, item._id); loadTrip(); }} style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer' }}>
+                {trip.items.length === 0 ? (
+                    <p className="py-10 text-center text-slate-400 font-medium">Your basket is empty. Add something above!</p>
+                ) : (
+                    trip.items.map(item => (
+                        <div key={item._id} className="group grid grid-cols-1 items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 transition-all hover:border-emerald-100 hover:shadow-md sm:grid-cols-5 sm:px-6">
+                            <div className="col-span-2">
+                                <p className="font-bold text-slate-900">{item.name}</p>
+                                <span className="inline-block rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                                    {item.category}
+                                </span>
+                            </div>
+                            
+                            <div className="text-sm text-slate-500">
+                                <span className="font-semibold text-slate-900">R{item.price.toFixed(2)}</span>
+                                <span className="mx-1">×</span>
+                                {item.quantity}
+                            </div>
+
+                            <div className="text-lg font-black text-slate-900">
+                                <span className="text-xs font-bold text-emerald-600">R</span>
+                                {(item.price * item.quantity).toFixed(2)}
+                            </div>
+
+                            <div className="flex justify-end">
+                                <button 
+                                    onClick={async () => { await deleteItem(id, item._id); loadTrip(); }} 
+                                    className="rounded-full p-2 text-slate-300 transition-colors hover:bg-red-50 hover:text-red-500"
+                                >
                                     <Trash2 size={18} />
                                 </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
         </div>
     );
 };
