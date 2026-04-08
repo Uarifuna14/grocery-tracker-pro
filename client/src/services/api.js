@@ -2,7 +2,9 @@ import axios from 'axios';
 
 // --- CREATE AXIOS INSTANCE ---
 const API = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: window.location.origin.includes('localhost')
+        ? 'http://localhost:5000/api'
+        : '/api',
 });
 
 // --- REQUEST INTERCEPTOR (Attach Token Safely) ---
@@ -61,7 +63,6 @@ export const deleteItem = (tripId, itemId) =>
 export const getCategoryStats = () =>
     API.get('/reports/category-stats');
 
-// (Optional but recommended)
 export const getMonthlyStats = () =>
     API.get('/reports/monthly-stats');
 
