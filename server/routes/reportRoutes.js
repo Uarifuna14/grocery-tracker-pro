@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getCategoryStats, getMonthlyStats } = require('../controllers/reportController');
+const { getCategoryStats } = require('../controllers/reportController');
+const { protect } = require('../middleware/authMiddleware'); // Your auth protector
 
-router.get('/category-stats', getCategoryStats);
-router.get('/monthly-stats', getMonthlyStats);
+// This route MUST have protect
+router.get('/category-stats', protect, getCategoryStats);
 
 module.exports = router;

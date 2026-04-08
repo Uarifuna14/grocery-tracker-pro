@@ -34,7 +34,7 @@ const TripList = () => {
         <div key={trip._id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h3>{trip.storeName}</h3>
-            <p>Total: ${trip.totalSpent.toFixed(2)}</p>
+            <p>Total: R{trip.totalSpent.toFixed(2)}</p>
           </div>
           <div style={{ display: 'flex', gap: '15px' }}>
             <Link to={`/trip/${trip._id}`} style={{ color: '#007bff' }}><Eye size={24} /></Link>

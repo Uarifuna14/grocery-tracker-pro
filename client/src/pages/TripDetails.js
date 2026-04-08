@@ -35,7 +35,7 @@ const TripDetails = () => {
             </button>
 
             <h2>{trip.storeName} Details</h2>
-            <p>Total Spent: <strong>${trip.totalSpent.toFixed(2)}</strong></p>
+            <p>Total Spent: <strong>R{trip.totalSpent.toFixed(2)}</strong></p>
 
             {/* Add Item Form */}
             <form onSubmit={handleAddItem} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '10px', marginBottom: '30px' }}>
@@ -68,9 +68,9 @@ const TripDetails = () => {
                         <tr key={item._id} style={{ borderBottom: '1px solid #eee' }}>
                             <td style={{ padding: '10px 0' }}>{item.name}</td>
                             <td>{item.category}</td>
-                            <td>${item.price.toFixed(2)}</td>
+                            <td>R{item.price.toFixed(2)}</td>
                             <td>{item.quantity}</td>
-                            <td>${(item.price * item.quantity).toFixed(2)}</td>
+                            <td>R{(item.price * item.quantity).toFixed(2)}</td>
                             <td>
                                 <button onClick={async () => { await deleteItem(id, item._id); loadTrip(); }} style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer' }}>
                                     <Trash2 size={18} />
