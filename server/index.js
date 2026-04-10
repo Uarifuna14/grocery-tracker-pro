@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
-
+const mongoose = require('mongoose');
 // Route Imports
 const tripRoutes = require('./routes/tripRoutes');
 const reportRoutes = require('./routes/reportRoutes');
@@ -12,7 +12,6 @@ const authRoutes = require('./routes/authRoutes');
 dotenv.config();
 
 // Connect to MongoDB Atlas
-connectDB();
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
