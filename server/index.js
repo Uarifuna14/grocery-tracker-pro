@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const mongoose = require('mongoose');
+
 // Route Imports
 const tripRoutes = require('./routes/tripRoutes');
 const reportRoutes = require('./routes/reportRoutes');
@@ -12,10 +12,8 @@ const authRoutes = require('./routes/authRoutes');
 dotenv.config();
 
 // Connect to MongoDB Atlas
+connectDB();
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log("DB Connection Error: ", err));
 
 const app = express();
 
@@ -40,5 +38,3 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-// CRITICAL for Vercel: Export the app
-module.exports = app;
