@@ -14,6 +14,10 @@ dotenv.config();
 // Connect to MongoDB Atlas
 connectDB();
 
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log("DB Connection Error: ", err));
+
 const app = express();
 
 // Middleware
@@ -36,3 +40,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+// CRITICAL for Vercel: Export the app
+module.exports = app;
